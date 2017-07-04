@@ -22,19 +22,23 @@
     </LinearLayout>
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="60"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="10dp"
+        >
 
         <TextView
             android:id="@+id/checkCount"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:gravity="center"
+            android:layout_gravity="center"
             android:textSize="40pt"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:background="@drawable/square_blue"/>
     </LinearLayout>
 
     <LinearLayout
