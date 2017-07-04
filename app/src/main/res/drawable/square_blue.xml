@@ -4,11 +4,11 @@
     <solid
         android:color="#0070FF"/>
     <size
-        android:width="150dp"
-        android:height="150dp"/>
+        android:width="200dp"
+        android:height="200dp"/>
     <corners
-        android:topLeftRadius="10dp"
-        android:topRightRadius="10dp"
-        android:bottomLeftRadius="10dp"
-        android:bottomRightRadius="10dp"/>
+        android:topLeftRadius="15dp"
+        android:topRightRadius="15dp"
+        android:bottomLeftRadius="15dp"
+        android:bottomRightRadius="15dp"/>
 </shape>

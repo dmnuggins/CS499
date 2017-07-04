@@ -12,28 +12,31 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    String initVal = "0";
-    PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+
+
+//    TextView count = (TextView) findViewById(R.id.txt_checkCount);
+//
+//    PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activty_locked);
-        TextView text = (TextView) findViewById(R.id.checkCount);
-        text.setText(initVal);
+        TextView text = (TextView) findViewById(R.id.txt_checkCount);
+
     }
 
-    @SuppressWarnings("depreciation")
-    public boolean screenOn(PowerManager pm) {
-        boolean result = false;
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-            result = pm.isInteractive();
-        } else {
-            result = pm.isScreenOn();
-        }
-
-        return result;
-    }
+//    @SuppressWarnings("depreciation")
+//    public boolean screenOn(PowerManager pm) {
+//        boolean result = false;
+//
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+//            result = pm.isInteractive();
+//        } else {
+//            result = pm.isScreenOn();
+//        }
+//
+//        return result;
+//    }
 }
