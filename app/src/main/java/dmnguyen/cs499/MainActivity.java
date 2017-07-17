@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for(ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -54,30 +56,5 @@ public class MainActivity extends AppCompatActivity {
         Log.i("MAINACT", "onDestroy!");
         super.onDestroy();
     }
-
-//    @Override
-//    protected void onPause() {
-//        // WHEN THE SCREEN IS ABOUT TO TURN OFF
-//        if(ScreenReceiver.screenOn) {
-//            // THIS IS THE CASE WHEN ONPAUSE() IS CALLED BY THE SYSTEM DUE TO A SCREEN STATE CHANGE
-//            System.out.println("SCREEN TURNED OFF");
-//        } else {
-//            // THIS IS WHEN ONPAUSE() IS CALLED WHEN THE SCREEN S TATE HAS NOT CHANGED
-//        }
-//        super.onPause();
-//    }
-
-//    @Override
-//    protected void onResume() {
-//        // ONLY WHEN THE SCREEN TURNS ON
-//        if(!ScreenReceiver.screenOn) {
-//            // THIS IS WHEN ONRESUME90 IS CALLED DUE TO A SCREEN STATE CHANGE
-//            System.out.println("SCREEN TURNED ON");
-//        } else {
-//            // THIS IS WHEN ONRESUME() IS CALLED WHEN THE SCREEN STATE HAS NOT CHANGED
-//        }
-//        super.onResume();
-//    }
-
 
 }
