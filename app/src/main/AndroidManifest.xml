@@ -18,8 +18,19 @@
             </intent-filter>
         </activity>
         <service
+            android:name=".UpdateService"
+            android:enabled="true"/>
+        <service
             android:name=".CounterService"
-            android:exported="false"/>
+            android:enabled="true"/>
+        <receiver android:name=".ScreenReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+            <intent-filter>
+                <action android:name=".RestartSensor"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

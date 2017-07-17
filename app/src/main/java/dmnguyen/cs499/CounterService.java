@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
