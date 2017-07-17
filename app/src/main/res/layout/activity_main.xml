@@ -86,5 +86,11 @@
             android:textAlignment="center"
             android:textSize="10pt" />
 
+        <Button
+            android:id="@+id/buttonToggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Toggle Service"/>
+
     </LinearLayout>
 </LinearLayout>
