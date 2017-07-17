@@ -19,6 +19,10 @@ public class MainActivity extends AppCompatActivity {
 
     Intent mServiceIntent;
     private UpdateService mUpdateService;
+    public static final String MyPREFERENCES = "MyPrefs";
+    public static final String STATE = "stateKey";
+
+    SharedPreferences sharedPreferences;
 
     Context ctx;
 
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // restarts service if it is not running
         ctx = this;
         setContentView(R.layout.activity_main);
         mUpdateService = new UpdateService(getCtx());
@@ -34,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         if(!isMyServiceRunning(mUpdateService.getClass())) {
             startService(mServiceIntent);
         }
+        // sharedPreferences
+        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
     }
 
 

@@ -18,6 +18,7 @@ public class UpdateService extends Service {
     //PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
     public int counter = 0;
+    private static final String SCREEN_STATE = "screen_state";
     BroadcastReceiver mReceiver;
     IntentFilter filter;
 
@@ -43,14 +44,14 @@ public class UpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        boolean screenOn = intent.getBooleanExtra("screen_state", false);
-//        if(!screenOn) {
-//            // whatever
-//        } else {
-//            // whatever
-//        }
+        ScreenReceiver sr = new ScreenReceiver();
+        boolean screenOn = sr.getState();
+        if(!screenOn) {
+            // whatever
+        } else {
+            // whatever
+        }
         super.onStartCommand(intent, flags, startId);
-//        startTimer();
         return START_STICKY;
     }
 
