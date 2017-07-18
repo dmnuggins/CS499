@@ -1,24 +1,16 @@
 package dmnguyen.cs499;
 
 import android.app.ActivityManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.util.Calendar;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -28,11 +20,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ScheduledExecutorService scheduledExecutorService;
     private Button resetCounterButton;
     private TextView counterTextView;
+    private TextView totalTextView;
+    private TextView averageTextView;
+    private TextView yesterdayTextView;
 
     private static final String TRACKING_VALUES = "trackingValues";
     private static final String COUNT = "countKey";
+    private static final String TOTAL = "totalKey";
+    private static final String AVERAGE = "averageKey";
+    private static final String YESTERDAY = "yesterdayKey";
 
-    public Calendar currentTime;
     SharedPreferences pref;
 
 
@@ -48,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         resetCounterButton = (Button) findViewById(R.id.buttonReset);
         resetCounterButton.setOnClickListener(this);
         counterTextView = (TextView) findViewById(R.id.textViewCount);
+        totalTextView = (TextView) findViewById(R.id.textViewTotal);
+        averageTextView = (TextView) findViewById(R.id.textViewAverage);
+        yesterdayTextView = (TextView) findViewById(R.id.textViewYesterday);
 
         // sharedPreferences
         pref = getSharedPreferences(TRACKING_VALUES, Context.MODE_PRIVATE);
@@ -111,8 +111,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateTextView() {
-        String string = Integer.toString(pref.getInt(COUNT,0));
-        counterTextView.setText(string);
+        String count = Integer.toString(pref.getInt(COUNT,0));
+        String total = "Total: " + Integer.toString(pref.getInt(TOTAL,0));
+        String average = "Daily Average: " + String.valueOf(pref.getFloat(AVERAGE,0));
+        String yesterday = "Yesterday: " + Integer.toString(pref.getInt(YESTERDAY,0));
+        counterTextView.setText(count);
+        totalTextView.setText(total);
+        averageTextView.setText(average);
+        yesterdayTextView.setText(yesterday);
+
     }
 
 }

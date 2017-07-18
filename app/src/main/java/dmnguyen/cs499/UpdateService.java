@@ -20,6 +20,10 @@ public class UpdateService extends Service {
 
     private static final String TRACKING_VALUES = "trackingValues";
     private static final String COUNT = "countKey";
+    private static final String TOTAL = "totalKey";
+    private static final String AVERAGE = "averageKey";
+    private static final String YESTERDAY = "yesterdayKey";
+    private static final String DAY_COUNT = "dayCountKey";
 
     private boolean serviceStarted;
 
@@ -69,10 +73,16 @@ public class UpdateService extends Service {
         ScreenReceiver sr = new ScreenReceiver();
         boolean screenOn = sr.getState();
         int updateCount = pref.getInt(COUNT,0);
+        int updateTotal = pref.getInt(TOTAL,0);
+
         if(screenOn && serviceStarted) {
             updateCount++;
+            updateTotal++;
             pref.edit().putInt(COUNT, updateCount).apply();
+            pref.edit().putInt(TOTAL, updateTotal).apply();
             Log.i("Count", Integer.toString(updateCount));
+            Log.i("TOTAL", Integer.toString(updateTotal));
+
         }
         return START_STICKY;
     }
@@ -107,15 +117,30 @@ public class UpdateService extends Service {
         return null;
     }
 
+    private void calculateAverage() {
+        int numDays = pref.getInt(DAY_COUNT,0);
+        int totalCount = pref.getInt(TOTAL,0);
+        float average = (float)totalCount/(float)numDays;
+        pref.edit().putFloat(AVERAGE, average).apply();
+    }
+
     private void resetCounter() {
         // TIME CONDITIONS
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current second
         int currentMinute = Calendar.getInstance().get(Calendar.MINUTE);
         int currentSecond = Calendar.getInstance().get(Calendar.SECOND);
+        int dayCount = pref.getInt(DAY_COUNT,0) + 1;
+        int dayTotal = pref.getInt(COUNT,0);
+
         if(currentHour == 0 && currentMinute == 0 && currentSecond == 0) {
+
+            pref.edit().putInt(YESTERDAY,dayTotal).apply();
+            pref.edit().putInt(DAY_COUNT, dayCount).apply();
             pref.edit().putInt(COUNT,0).apply();
+            calculateAverage();
             Log.i("Timer","COUNT RESET FOR THE DAY");
             Log.i("Count",Integer.toString(pref.getInt(COUNT,0)));
+
         }
     }
 }
