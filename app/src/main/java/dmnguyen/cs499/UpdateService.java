@@ -27,6 +27,7 @@ public class UpdateService extends Service {
     private static final String YESTERDAY = "yesterdayKey";
     private static final String DAY_COUNT = "dayCountKey";
 
+    public boolean onDestroyCalled;
     private boolean serviceStarted;
 
     SharedPreferences pref;
@@ -42,6 +43,7 @@ public class UpdateService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.i("UpdateService", "ON_CREATE");
         // REGISTER RECEIVER THAT HANDLES SCREEN ON AND SCREEN OFF LOGIC
         filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
@@ -66,11 +68,12 @@ public class UpdateService extends Service {
         };
         t.start();
 
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("onStartCommand", "has been called");
+        Log.i("UpdateService", "ON_START_COMMAND");
         super.onStartCommand(intent, flags, startId);
 
         ScreenReceiver sr = new ScreenReceiver();
@@ -78,14 +81,17 @@ public class UpdateService extends Service {
         int updateCount = pref.getInt(COUNT,0);
         int updateTotal = pref.getInt(TOTAL,0);
 
-        if(screenOn) {
+        if(screenOn && !onDestroyCalled) {
+            Log.i("UpdateService", "SCREEN_ON : " + screenOn + "");
             updateCount += 1;
             updateTotal += 1;
             pref.edit().putInt(COUNT, updateCount).apply();
             pref.edit().putInt(TOTAL, updateTotal).apply();
+            onDestroyCalled = false;
         }
         Log.i("UpdateService.Count", Integer.toString(updateCount));
         Log.i("UpdateService.TOTAL", Integer.toString(updateTotal));
+        notifyUser();
         return START_STICKY;
     }
 
@@ -94,14 +100,14 @@ public class UpdateService extends Service {
     public void onDestroy() {
 
         super.onDestroy();
-        Log.i("EXIT", "onDestroy!");
+        Log.i("UpdateService", "ON_DESTROY!");
         unregisterReceiver(mReceiver);
-        int updateCount = pref.getInt(COUNT,0);
-        int updateTotal = pref.getInt(TOTAL,0);
-        updateCount -= 2;
-        updateTotal -= 2;
-        pref.edit().putInt(COUNT, updateCount).apply();
-        pref.edit().putInt(TOTAL, updateTotal).apply();
+//        int updateCount = pref.getInt(COUNT,0);
+//        int updateTotal = pref.getInt(TOTAL,0);
+//        updateCount -= 2;
+//        updateTotal -= 2;
+//        pref.edit().putInt(COUNT, updateCount).apply();
+//        pref.edit().putInt(TOTAL, updateTotal).apply();
 
         // restarts the service once it's destroyed
         Intent broadcastIntent = new Intent(".RestartService");
@@ -152,7 +158,8 @@ public class UpdateService extends Service {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.locked_in_launcher_round)
+                        .setSmallIcon(R.mipmap.locked_in_action)
+//                        .setColor(0,112,255)
                         .setContentTitle("LockedIN")
                         .setContentText(notification);
         Intent resultIntent = new Intent(this, MainActivity.class);
@@ -168,7 +175,7 @@ public class UpdateService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+        mBuilder.setOngoing(true);
         mNotificationManager.notify(0, mBuilder.build());
     }
 }

@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 public class ScreenReceiver extends BroadcastReceiver {
-    public static boolean screenOn = true;
+    public static boolean screenOn;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -24,6 +24,7 @@ public class ScreenReceiver extends BroadcastReceiver {
 
         Intent i = new Intent(context, UpdateService.class);
         context.startService(i);
+        Log.i("ScreenReceiver", "RECEIVED");
     }
 
     public boolean getState() {
