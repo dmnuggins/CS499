@@ -53,7 +53,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(!isMyServiceRunning(mUpdateService.getClass())) {
             startService(mServiceIntent);
             int countShift = pref.getInt(COUNT,0);
+            int totalShift = pref.getInt(TOTAL,0);
+            if(countShift > 0) {
+                countShift -= 1;
+                totalShift -= 1;
+            }
             pref.edit().putInt(COUNT,countShift).apply();
+            pref.edit().putInt(TOTAL,totalShift).apply();
         }
 
         // Used to constantly update counter text view

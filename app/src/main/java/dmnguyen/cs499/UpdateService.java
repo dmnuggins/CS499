@@ -78,8 +78,8 @@ public class UpdateService extends Service {
         int updateTotal = pref.getInt(TOTAL,0);
 
         if(screenOn && serviceStarted) {
-            updateCount++;
-            updateTotal++;
+            updateCount += 1;
+            updateTotal += 1;
             pref.edit().putInt(COUNT, updateCount).apply();
             pref.edit().putInt(TOTAL, updateTotal).apply();
             Log.i("Count", Integer.toString(updateCount));
@@ -89,13 +89,6 @@ public class UpdateService extends Service {
         return START_STICKY;
     }
 
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        super.onTaskRemoved(rootIntent);
-//        unregisterReceiver(mReceiver);
-        Intent broadcastIntent = new Intent(".RestartService");
-        sendBroadcast(broadcastIntent);
-    }
 
     @Override
     public void onDestroy() {
@@ -104,8 +97,11 @@ public class UpdateService extends Service {
         Log.i("EXIT", "onDestroy!");
         unregisterReceiver(mReceiver);
         int updateCount = pref.getInt(COUNT,0);
-        updateCount -= 3;
+        int updateTotal = pref.getInt(TOTAL,0);
+        updateCount -= 2;
+        updateTotal -= 2;
         pref.edit().putInt(COUNT, updateCount).apply();
+        pref.edit().putInt(TOTAL, updateTotal).apply();
 
         // restarts the service once it's destroyed
         Intent broadcastIntent = new Intent(".RestartService");
