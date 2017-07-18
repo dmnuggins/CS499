@@ -77,15 +77,14 @@ public class UpdateService extends Service {
         int updateCount = pref.getInt(COUNT,0);
         int updateTotal = pref.getInt(TOTAL,0);
 
-        if(screenOn && serviceStarted) {
+        if(screenOn) {
             updateCount += 1;
             updateTotal += 1;
             pref.edit().putInt(COUNT, updateCount).apply();
             pref.edit().putInt(TOTAL, updateTotal).apply();
-            Log.i("Count", Integer.toString(updateCount));
-            Log.i("TOTAL", Integer.toString(updateTotal));
-
         }
+        Log.i("Count", Integer.toString(updateCount));
+        Log.i("TOTAL", Integer.toString(updateTotal));
         return START_STICKY;
     }
 
