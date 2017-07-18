@@ -152,7 +152,7 @@ public class UpdateService extends Service {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.square_blue)
+                        .setSmallIcon(R.mipmap.locked_in_launcher_round)
                         .setContentTitle("LockedIN")
                         .setContentText(notification);
         // Creates an explicit intent for an Activity in your app
