@@ -7,13 +7,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 public class UpdateService extends Service {
 
@@ -37,8 +35,6 @@ public class UpdateService extends Service {
 
     public UpdateService() {};
 
-
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -59,7 +55,9 @@ public class UpdateService extends Service {
                         Thread.sleep(1000);
                         resetCounter();
                     }
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException e) {
+                    getStackTrace();
+                }
             }
         };
         t.start();

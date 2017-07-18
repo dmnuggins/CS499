@@ -10,14 +10,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import java.util.concurrent.ScheduledExecutorService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Intent mServiceIntent;
     UpdateService mUpdateService;
-    ScheduledExecutorService scheduledExecutorService;
     private Button resetCounterButton;
     private TextView counterTextView;
     private TextView totalTextView;
@@ -55,9 +53,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(!isMyServiceRunning(mUpdateService.getClass())) {
             startService(mServiceIntent);
             int countShift = pref.getInt(COUNT,0);
-            if(countShift > 0) {
-//                countShift -= 1;
-            }
             pref.edit().putInt(COUNT,countShift).apply();
         }
 
@@ -75,7 +70,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         });
                     }
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException e) {
+                    getStackTrace();
+                }
             }
         };
         t.start();
