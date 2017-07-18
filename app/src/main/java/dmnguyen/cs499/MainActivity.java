@@ -50,13 +50,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pref = getSharedPreferences(TRACKING_VALUES, Context.MODE_PRIVATE);
 
         if(!isMyServiceRunning(mUpdateService.getClass())) {
+            startService(mServiceIntent);
             int countShift = pref.getInt(COUNT,0);
             int totalShift = pref.getInt(TOTAL,0);
-            startService(mServiceIntent);
-            Log.i("MainAct", "SERVICE STARTED");
-            // shift accounts for when service is restarted when app is reopened
-            countShift -= 1;
-            totalShift -= 1;
+            if(countShift > 0) {
+                countShift -= 1;
+                totalShift -= 1;
+            }
             pref.edit().putInt(COUNT,countShift).apply();
             pref.edit().putInt(TOTAL,totalShift).apply();
         }
