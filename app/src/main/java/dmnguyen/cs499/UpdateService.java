@@ -5,31 +5,36 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class UpdateService extends Service {
 
-    //PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
-    public int counter = 0;
-    private static final String SCREEN_STATE = "screen_state";
+    private static final String TRACKING_VALUES = "trackingValues";
+    private static final String COUNT = "countKey";
+
+    private boolean serviceStarted;
+
+    SharedPreferences pref;
+    Calendar currentTime = Calendar.getInstance();
     BroadcastReceiver mReceiver;
     IntentFilter filter;
 
-    public UpdateService(Context applicationContext) {
+    public UpdateService(Context appContext) {
         super();
-        Log.i("HERE", "here I am!");
     }
 
-    public UpdateService() {
+    public UpdateService() {};
 
-    }
+
 
     @Override
     public void onCreate() {
@@ -39,20 +44,32 @@ public class UpdateService extends Service {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         mReceiver = new ScreenReceiver();
         registerReceiver(mReceiver, filter);
+        serviceStarted = true;
+
+        pref = getApplication().getSharedPreferences(TRACKING_VALUES,Context.MODE_PRIVATE);
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+
         ScreenReceiver sr = new ScreenReceiver();
         boolean screenOn = sr.getState();
-        if(!screenOn) {
-            // whatever
-        } else {
-            // whatever
+        int updateCount = pref.getInt(COUNT,0);
+        if(screenOn && serviceStarted) {
+            updateCount++;
+            pref.edit().putInt(COUNT, updateCount).apply();
+            Log.i("Count", Integer.toString(updateCount));
         }
-        super.onStartCommand(intent, flags, startId);
+
+        // TIME CONDITIONS
+//        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
+//        return currentHour < 18 //False if after 6pm
+
         return START_STICKY;
+
+
     }
 
     @Override
@@ -65,13 +82,18 @@ public class UpdateService extends Service {
 
     @Override
     public void onDestroy() {
-//        unregisterReceiver(mReceiver);
+
         super.onDestroy();
         Log.i("EXIT", "onDestroy!");
+
+        int updateCount = pref.getInt(COUNT,0);
+        updateCount -= 3;
+        pref.edit().putInt(COUNT, updateCount).apply();
+
         // restarts the service once it's destroyed
         Intent broadcastIntent = new Intent(".RestartService");
         sendBroadcast(broadcastIntent);
-//        stoptimertask();
+
     }
 
     @Nullable

@@ -38,13 +38,12 @@
             android:gravity="center"
             android:text="Checked your phone..."/>
         <TextView
-            android:id="@+id/txt_checkCount"
+            android:id="@+id/textViewCount"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center"
             android:background="@drawable/square_blue"
             android:gravity="center"
-            android:text="0"
             android:textAlignment="center"
             android:textSize="40pt" />
         <TextView
@@ -71,7 +70,7 @@
             android:textSize="10pt" />
 
         <TextView
-            android:id="@+id/txt_average"
+            android:id="@+id/textViewAverage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Average: 0"
@@ -79,7 +78,7 @@
             android:textSize="10pt" />
 
         <TextView
-            android:id="@+id/txt_yesterday"
+            android:id="@+id/textViewYesterday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Yesterday: 0"
@@ -87,10 +86,10 @@
             android:textSize="10pt" />
 
         <Button
-            android:id="@+id/buttonToggle"
+            android:id="@+id/buttonReset"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Toggle Service"/>
+            android:text="Reset Counter"/>
 
     </LinearLayout>
 </LinearLayout>
