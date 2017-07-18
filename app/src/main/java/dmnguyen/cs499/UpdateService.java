@@ -70,6 +70,7 @@ public class UpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i("onStartCommand", "has been called");
         super.onStartCommand(intent, flags, startId);
 
         ScreenReceiver sr = new ScreenReceiver();
@@ -83,8 +84,8 @@ public class UpdateService extends Service {
             pref.edit().putInt(COUNT, updateCount).apply();
             pref.edit().putInt(TOTAL, updateTotal).apply();
         }
-        Log.i("Count", Integer.toString(updateCount));
-        Log.i("TOTAL", Integer.toString(updateTotal));
+        Log.i("UpdateService.Count", Integer.toString(updateCount));
+        Log.i("UpdateService.TOTAL", Integer.toString(updateTotal));
         return START_STICKY;
     }
 
