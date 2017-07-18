@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if(v == resetCounterButton) {
             pref.edit().clear().apply();
-            Log.i("Feedback Message", "COUNT RESET");
+            Log.i("Feedback Message", "ALL VALUES RESET");
         }
     }
 
