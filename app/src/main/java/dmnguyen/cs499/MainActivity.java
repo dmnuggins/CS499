@@ -26,19 +26,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TOTAL = "totalKey";
     private static final String AVERAGE = "averageKey";
     private static final String YESTERDAY = "yesterdayKey";
-    private static final String INITIAL = "initialKey";
-
-    public boolean wasDestroyed;
-
 
     SharedPreferences pref;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        boolean initial;
-
-        Log.i("MainActivity", "ON_CREATE");
         super.onCreate(savedInstanceState);
         // restarts service if it is not running
         setContentView(R.layout.activity_main);
@@ -56,27 +49,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // sharedPreferences
         pref = getSharedPreferences(TRACKING_VALUES, Context.MODE_PRIVATE);
 
-        // initial opening of the app
-        do{
-
-            pref.edit().putInt(TOTAL,1).apply();
-            pref.edit().putInt(COUNT,1).apply();
-            pref.edit().putBoolean(INITIAL,false).apply();
-            initial = pref.getBoolean(INITIAL,false);
-        } while(initial);
-
-
         if(!isMyServiceRunning(mUpdateService.getClass())) {
             int countShift = pref.getInt(COUNT,0);
             int totalShift = pref.getInt(TOTAL,0);
             startService(mServiceIntent);
             Log.i("MainAct", "SERVICE STARTED");
             // shift accounts for when service is restarted when app is reopened
-            if(countShift > countShift + 1) {
-                wasDestroyed = false;
-                countShift -= 1;
-                totalShift -= 1;
-            }
+            countShift -= 1;
+            totalShift -= 1;
             pref.edit().putInt(COUNT,countShift).apply();
             pref.edit().putInt(TOTAL,totalShift).apply();
         }
@@ -125,38 +105,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
-        wasDestroyed = true;
         stopService(mServiceIntent);
-        Log.i("MainActivity.onDestroy", "ON_DESTROY!");
-        Log.i("MainActivity.Count", Integer.toString(pref.getInt(COUNT,0)));
-        Log.i("UpdateService.TOTAL", Integer.toString(pref.getInt(TOTAL,0)));
+        Log.i("MainActivity", "onDestroy!");
         super.onDestroy();
-    }
-
-    @Override
-    protected void onPause() {
-        wasDestroyed = true;
-        stopService(mServiceIntent);
-        Log.i("MainActivity.onPause", "ON_PAUSE!");
-        Log.i("MainActivity.Count", Integer.toString(pref.getInt(COUNT,0)));
-        Log.i("MainActivity.TOTAL", Integer.toString(pref.getInt(TOTAL,0)));
-        super.onPause();
     }
 
     private void updateTextView() {
         String count = Integer.toString(pref.getInt(COUNT,0));
         String total = "Total: " + Integer.toString(pref.getInt(TOTAL,0));
-        String average = "Daily Average: " + String.format("%.2f",pref.getFloat(AVERAGE,0));
+        String average = "Daily Average: " + String.valueOf(pref.getFloat(AVERAGE,0));
         String yesterday = "Yesterday: " + Integer.toString(pref.getInt(YESTERDAY,0));
         counterTextView.setText(count);
         totalTextView.setText(total);
         averageTextView.setText(average);
         yesterdayTextView.setText(yesterday);
 
-    }
-
-    public boolean getDestroyedState() {
-        return wasDestroyed;
     }
 
 }
