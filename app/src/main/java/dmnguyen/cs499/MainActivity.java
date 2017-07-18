@@ -17,16 +17,22 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.util.Calendar;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Intent mServiceIntent;
     UpdateService mUpdateService;
-
+    ScheduledExecutorService scheduledExecutorService;
     private Button resetCounterButton;
     private TextView counterTextView;
 
     private static final String TRACKING_VALUES = "trackingValues";
     private static final String COUNT = "countKey";
+
+    public Calendar currentTime;
     SharedPreferences pref;
 
 
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startService(mServiceIntent);
             int countShift = pref.getInt(COUNT,0);
             if(countShift > 0) {
-                countShift -= 1;
+//                countShift -= 1;
             }
             pref.edit().putInt(COUNT,countShift).apply();
         }
@@ -73,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         t.start();
-
     }
 
     @Override
@@ -83,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i("Feedback Message", "COUNT RESET");
         }
     }
+
+
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);

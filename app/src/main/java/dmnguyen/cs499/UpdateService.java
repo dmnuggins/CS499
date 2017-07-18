@@ -24,7 +24,6 @@ public class UpdateService extends Service {
     private boolean serviceStarted;
 
     SharedPreferences pref;
-    Calendar currentTime = Calendar.getInstance();
     BroadcastReceiver mReceiver;
     IntentFilter filter;
 
@@ -45,10 +44,23 @@ public class UpdateService extends Service {
         mReceiver = new ScreenReceiver();
         registerReceiver(mReceiver, filter);
         serviceStarted = true;
-
         pref = getApplication().getSharedPreferences(TRACKING_VALUES,Context.MODE_PRIVATE);
-    }
 
+        // Background thread to reset counter once the day ends
+        final Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(1000);
+                        resetCounter();
+                    }
+                } catch (InterruptedException e) {}
+            }
+        };
+        t.start();
+
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -62,20 +74,13 @@ public class UpdateService extends Service {
             pref.edit().putInt(COUNT, updateCount).apply();
             Log.i("Count", Integer.toString(updateCount));
         }
-
-        // TIME CONDITIONS
-//        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
-//        return currentHour < 18 //False if after 6pm
-
         return START_STICKY;
-
-
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        unregisterReceiver(mReceiver);
+//        unregisterReceiver(mReceiver);
         Intent broadcastIntent = new Intent(".RestartService");
         sendBroadcast(broadcastIntent);
     }
@@ -85,7 +90,7 @@ public class UpdateService extends Service {
 
         super.onDestroy();
         Log.i("EXIT", "onDestroy!");
-
+        unregisterReceiver(mReceiver);
         int updateCount = pref.getInt(COUNT,0);
         updateCount -= 3;
         pref.edit().putInt(COUNT, updateCount).apply();
@@ -100,5 +105,17 @@ public class UpdateService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void resetCounter() {
+        // TIME CONDITIONS
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current second
+        int currentMinute = Calendar.getInstance().get(Calendar.MINUTE);
+        int currentSecond = Calendar.getInstance().get(Calendar.SECOND);
+        if(currentHour == 0 && currentMinute == 0 && currentSecond == 0) {
+            pref.edit().putInt(COUNT,0).apply();
+            Log.i("Timer","COUNT RESET FOR THE DAY");
+            Log.i("Count",Integer.toString(pref.getInt(COUNT,0)));
+        }
     }
 }
