@@ -20,15 +20,12 @@
         <service
             android:name=".UpdateService"
             android:enabled="true"/>
-        <service
-            android:name=".CounterService"
-            android:enabled="true"/>
         <receiver android:name=".ScreenReceiver"
             android:enabled="true"
             android:exported="true"
             android:label="RestartServiceWhenStopped">
             <intent-filter>
-                <action android:name=".RestartSensor"/>
+                <action android:name=".RestartService"/>
             </intent-filter>
         </receiver>
     </application>

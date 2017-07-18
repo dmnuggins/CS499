@@ -56,52 +56,23 @@ public class UpdateService extends Service {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
         unregisterReceiver(mReceiver);
+        Intent broadcastIntent = new Intent(".RestartService");
+        sendBroadcast(broadcastIntent);
+    }
+
+    @Override
+    public void onDestroy() {
+//        unregisterReceiver(mReceiver);
+        super.onDestroy();
         Log.i("EXIT", "onDestroy!");
         // restarts the service once it's destroyed
-
-        Intent broadcastIntent = new Intent(".RestartSensor");
+        Intent broadcastIntent = new Intent(".RestartService");
         sendBroadcast(broadcastIntent);
 //        stoptimertask();
     }
-
-//    private Timer timer;
-//    private TimerTask timerTask;
-//    long oldTime = 0;
-//    public void startTimer() {
-//        // set a new Timer
-//        timer = new Timer();
-//
-//        // initialize the TimerTask's job
-//        initializeTimerTask();
-//
-//        // schedule the timer, to wake up every 1 second
-//        timer.schedule(timerTask, 1000, 1000);
-//    }
-//
-//    /**
-//     * sets the timer to print the counter every x seconds
-//     */
-//    public void initializeTimerTask() {
-//        timerTask = new TimerTask() {
-//            public void run() {
-//                Log.i("in timer", "in timer ++++  "+ (counter++));
-//            }
-//        };
-//    }
-//
-//    /**
-//     * not needed
-//     */
-//    public void stoptimertask() {
-//        //stop the timer, if it's not already null
-//        if (timer != null) {
-//            timer.cancel();
-//            timer = null;
-//        }
-//    }
 
     @Nullable
     @Override
