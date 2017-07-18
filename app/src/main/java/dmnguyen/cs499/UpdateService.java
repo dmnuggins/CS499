@@ -105,6 +105,7 @@ public class UpdateService extends Service {
         // restarts the service once it's destroyed
         Intent broadcastIntent = new Intent(".RestartService");
         sendBroadcast(broadcastIntent);
+
     }
 
     @Nullable
@@ -142,7 +143,7 @@ public class UpdateService extends Service {
         }
     }
 
-    // Sends a notification lets user know how many times they've check their phone
+    // Sends a notification lettting user know how many times they've check their phone
     private void notifyUser() {
 
         String notification = "Yesterday, you checked your phone "
@@ -154,10 +155,17 @@ public class UpdateService extends Service {
                         .setSmallIcon(R.mipmap.locked_in_launcher_round)
                         .setContentTitle("LockedIN")
                         .setContentText(notification);
+        // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
 
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
         stackBuilder.addParentStack(MainActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
@@ -168,6 +176,9 @@ public class UpdateService extends Service {
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+        // mNotificationId is a unique integer your app uses to identify the
+        // notification. For example, to cancel the notification, you can pass its ID
+        // number to NotificationManager.cancel().
         mNotificationManager.notify(0, mBuilder.build());
     }
 }
