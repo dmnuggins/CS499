@@ -14,7 +14,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
+
 
 import java.util.Calendar;
 
@@ -69,14 +69,13 @@ public class UpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("SERVICE", "onStartCommand Called");
         super.onStartCommand(intent, flags, startId);
 
         ScreenReceiver sr = new ScreenReceiver();
         boolean screenOn = sr.getState();
         boolean previousState = pref.getBoolean(CURRENT_STATE,false);
 
-        Log.i("SERVICE.oSC", "SCREEN_ON:" + screenOn);
+
         int updateCount = pref.getInt(COUNT,0);
         int updateTotal = pref.getInt(TOTAL,0);
 
@@ -90,15 +89,8 @@ public class UpdateService extends Service {
         if(screenOn && !previousState) {
             updateCount += 1;
             updateTotal += 1;
-
             pref.edit().putInt(COUNT, updateCount).apply();
-            Log.i("SERVICE.oSC", "COUNT + 1");
             pref.edit().putInt(TOTAL, updateTotal).apply();
-            Log.i("SERVICE.oSC", "TOTAL + 1");
-
-            Log.i("Count", Integer.toString(updateCount));
-            Log.i("TOTAL", Integer.toString(updateTotal));
-
         }
         pref.edit().putBoolean(CURRENT_STATE,screenOn).apply();
         return START_STICKY;
@@ -106,10 +98,7 @@ public class UpdateService extends Service {
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
-
-        Log.i("SERVICE.oD", "Service DESTROYED");
         unregisterReceiver(mReceiver);
 
         // restarts the service once it's destroyed
@@ -121,8 +110,6 @@ public class UpdateService extends Service {
             // cancels ACTIVE notification when toggle is switched off
             cancelNotification(getBaseContext(),0);
         }
-        // NEED A BOOLEAN TO FLAG THAT SERVICE WAS RESTARTED
-        Log.i("SERVICE.oD", "Broadcast SENT");
     }
 
     @Nullable
@@ -154,10 +141,6 @@ public class UpdateService extends Service {
 //            notifyUser(1);
             pref.edit().putInt(COUNT,0).apply();
             calculateAverage();
-
-            Log.i("Timer","COUNT RESET FOR THE DAY");
-            Log.i("Count",Integer.toString(pref.getInt(COUNT,0)));
-
         }
     }
 
@@ -172,7 +155,7 @@ public class UpdateService extends Service {
                         .setPriority(Notification.PRIORITY_HIGH)
                         .setNumber(flag)
                         .setSmallIcon(R.mipmap.locked_in_launcher_white)
-                        .setContentTitle("LockedIN")
+                        .setContentTitle("Habit Lock")
                         .setContentText(note);
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);

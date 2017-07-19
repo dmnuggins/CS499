@@ -4,10 +4,8 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -43,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        Log.i("MAIN", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mUpdateService = new UpdateService(getBaseContext());
@@ -78,20 +75,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    Log.i("MAIN, runnable", true + "");
                     pref.edit().putBoolean(TOGGLE_BUTTON_STATE, true).apply();
                     startService(mServiceIntent);
                 } else {
                     pref.edit().putBoolean(TOGGLE_BUTTON_STATE, false).apply();
                     stopService(mServiceIntent);
-                    Log.i("MAIN.toggle", "Service STOPPED");
                 }
             }
         });
 
         // Service will run if it is not already running and if the toggle button is ON
         if(!isMyServiceRunning(mUpdateService.getClass()) && toggleButton.isChecked()) {
-            Log.i("MAIN.onCreate", "START SERVICE");
             if(toggleStatus) {
                 startService(mServiceIntent);
             }
@@ -123,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if(v == resetCounterButton) {
             pref.edit().clear().apply();
-            Log.i("Feedback Message", "ALL VALUES RESET");
         }
     }
 
@@ -131,21 +124,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for(ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if(serviceClass.getName().equals(service.service.getClass())) {
-                Log.i("isMyServiceRunning?", true + "");
                 return true;
             }
         }
-        Log.i("MAIN", "isMyServiceRunning?" + false + "");
         return false;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        Log.i("MAIN", "onDestroy, SERVICE STOPPED");
         stopService(mServiceIntent);
-        Log.i("MainActivity", "onDestroy!");
     }
 
     @Override
