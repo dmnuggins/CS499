@@ -26,6 +26,7 @@ public class UpdateService extends Service {
     private static final String AVERAGE = "averageKey";
     private static final String YESTERDAY = "yesterdayKey";
     private static final String DAY_COUNT = "dayCountKey";
+    private static final String CURRENT_STATE = "cuStateKey";
 
     private boolean serviceStarted;
 
@@ -70,22 +71,34 @@ public class UpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i("SERVICE", "onStartCommand Called");
         super.onStartCommand(intent, flags, startId);
 
         ScreenReceiver sr = new ScreenReceiver();
         boolean screenOn = sr.getState();
+        boolean previousState = pref.getBoolean(CURRENT_STATE,false);
+
+        Log.i("SERVICE.oSC", "SCREEN_ON:" + screenOn);
         int updateCount = pref.getInt(COUNT,0);
         int updateTotal = pref.getInt(TOTAL,0);
 
-        if(screenOn && serviceStarted) {
+        notifyUser(0);
+
+        if(screenOn && !previousState) {
             updateCount += 1;
             updateTotal += 1;
+
             pref.edit().putInt(COUNT, updateCount).apply();
+            Log.i("SERVICE.oSC", "COUNT + 1");
             pref.edit().putInt(TOTAL, updateTotal).apply();
+            Log.i("SERVICE.oSC", "TOTAL + 1");
+
             Log.i("Count", Integer.toString(updateCount));
             Log.i("TOTAL", Integer.toString(updateTotal));
 
         }
+
+        pref.edit().putBoolean(CURRENT_STATE,screenOn).apply();
         return START_STICKY;
     }
 
@@ -94,19 +107,25 @@ public class UpdateService extends Service {
     public void onDestroy() {
 
         super.onDestroy();
-        Log.i("EXIT", "onDestroy!");
+        Log.i("SERVICE.oD", "Service DESTROYED");
         unregisterReceiver(mReceiver);
+        //
         int updateCount = pref.getInt(COUNT,0);
         int updateTotal = pref.getInt(TOTAL,0);
-        updateCount -= 2;
-        updateTotal -= 2;
+        // to account for service being started again twice
+//        updateCount -= 2;
+//        updateTotal -= 2;
+//        updateCount -= 1;
+//        updateTotal -= 1;
         pref.edit().putInt(COUNT, updateCount).apply();
         pref.edit().putInt(TOTAL, updateTotal).apply();
 
         // restarts the service once it's destroyed
         Intent broadcastIntent = new Intent(".RestartService");
         sendBroadcast(broadcastIntent);
+        // NEED A BOOLEAN TO FLAG THAT SERVICE WAS RESTARTED
 
+        Log.i("SERVICE.oD", "Broadcast SENT");
     }
 
     @Nullable
@@ -134,7 +153,7 @@ public class UpdateService extends Service {
 
             pref.edit().putInt(YESTERDAY,dayTotal).apply();
             pref.edit().putInt(DAY_COUNT, dayCount).apply();
-            notifyUser();
+            notifyUser(1);
             pref.edit().putInt(COUNT,0).apply();
             calculateAverage();
 
@@ -145,17 +164,15 @@ public class UpdateService extends Service {
     }
 
     // Sends a notification lettting user know how many times they've check their phone
-    private void notifyUser() {
+    private void notifyUser(int flag) {
 
-        String notification = "Yesterday, you checked your phone "
-                + Integer.toString(pref.getInt(COUNT,0))
-                + " times!";
+        String note = numberNotification(flag);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.square_blue)
                         .setContentTitle("LockedIN")
-                        .setContentText(notification);
+                        .setContentText(note);
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
 
@@ -174,6 +191,9 @@ public class UpdateService extends Service {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
+        if(flag == 0) {
+            mBuilder.setOngoing(true);
+        }
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -181,5 +201,19 @@ public class UpdateService extends Service {
         // notification. For example, to cancel the notification, you can pass its ID
         // number to NotificationManager.cancel().
         mNotificationManager.notify(0, mBuilder.build());
+    }
+
+    public String numberNotification(int flag) {
+        switch (flag) {
+            case 0 :
+                return "ACTIVE";
+            case 1 :
+                return "Yesterday, you checked your phone "
+                        + Integer.toString(pref.getInt(COUNT,0))
+                        + " times!";
+            default :
+                break;
+        }
+        return null;
     }
 }

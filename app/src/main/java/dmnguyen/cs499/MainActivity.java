@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("MAIN", "onCreate");
         super.onCreate(savedInstanceState);
         // restarts service if it is not running
         setContentView(R.layout.activity_main);
@@ -51,15 +52,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pref = getSharedPreferences(TRACKING_VALUES, Context.MODE_PRIVATE);
 
         if(!isMyServiceRunning(mUpdateService.getClass())) {
+            Log.i("MAIN.onCreate", "START SERVICE");
+
+//            int countShift = pref.getInt(COUNT,0);
+//            int totalShift = pref.getInt(TOTAL,0);
+//            if(countShift > 0) {
+//                countShift -= 1;
+//                totalShift -= 1;
+//            }
+//            pref.edit().putInt(COUNT,countShift).apply();
+//            pref.edit().putInt(TOTAL,totalShift).apply();
             startService(mServiceIntent);
-            int countShift = pref.getInt(COUNT,0);
-            int totalShift = pref.getInt(TOTAL,0);
-            if(countShift > 0) {
-                countShift -= 1;
-                totalShift -= 1;
-            }
-            pref.edit().putInt(COUNT,countShift).apply();
-            pref.edit().putInt(TOTAL,totalShift).apply();
         }
 
         // Used to constantly update counter text view
@@ -102,12 +105,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
             }
         }
-        Log.i("isMyServiceRunning?", false + "");
+        Log.i("MAIN", "isMyServiceRunning?" + false + "");
         return false;
     }
 
     @Override
     protected void onDestroy() {
+        Log.i("MAIN", "onDestroy, SERVICE STOPPED");
         stopService(mServiceIntent);
         Log.i("MainActivity", "onDestroy!");
         super.onDestroy();
