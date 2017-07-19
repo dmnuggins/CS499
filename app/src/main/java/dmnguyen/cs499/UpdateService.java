@@ -31,6 +31,8 @@ public class UpdateService extends Service {
     BroadcastReceiver mReceiver;
     IntentFilter filter;
 
+
+
     public UpdateService(Context appContext) {
         super();
     }
@@ -55,7 +57,6 @@ public class UpdateService extends Service {
                     while (!isInterrupted()) {
                         Thread.sleep(1000);
                         resetCounter();
-
                     }
                 } catch (InterruptedException e) {
                     getStackTrace();
@@ -116,6 +117,9 @@ public class UpdateService extends Service {
         if(toggle) {
             Intent broadcastIntent = new Intent(".RestartService");
             sendBroadcast(broadcastIntent);
+        } else {
+            // cancels ACTIVE notification when toggle is switched off
+            cancelNotification(getBaseContext(),0);
         }
         // NEED A BOOLEAN TO FLAG THAT SERVICE WAS RESTARTED
         Log.i("SERVICE.oD", "Broadcast SENT");
@@ -163,6 +167,7 @@ public class UpdateService extends Service {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
+                        .setNumber(flag)
                         .setSmallIcon(R.mipmap.locked_in_launcher_white)
                         .setContentTitle("LockedIN")
                         .setContentText(note);
@@ -208,5 +213,11 @@ public class UpdateService extends Service {
                 break;
         }
         return null;
+    }
+    // clears a notification based on its unique id
+    public void cancelNotification(Context ctx, int notifyId) {
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager manager = (NotificationManager) ctx.getSystemService(ns);
+        manager.cancel(notifyId);
     }
 }

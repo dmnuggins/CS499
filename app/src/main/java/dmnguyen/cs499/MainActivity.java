@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        // Service will run if it is not already running and if the toggle button is ON
         if(!isMyServiceRunning(mUpdateService.getClass()) && toggleButton.isChecked()) {
             Log.i("MAIN.onCreate", "START SERVICE");
             if(toggleStatus) {
