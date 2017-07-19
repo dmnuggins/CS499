@@ -45,6 +45,7 @@
             android:background="@drawable/square_blue"
             android:gravity="center"
             android:textAlignment="center"
+            android:text="0"
             android:textSize="40pt" />
         <TextView
             android:layout_width="match_parent"
@@ -84,12 +85,27 @@
             android:text="Yesterday: 0"
             android:textAlignment="center"
             android:textSize="10pt" />
-
-        <Button
-            android:id="@+id/buttonReset"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="RESET ALL"/>
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/buttonReset"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp"
+                android:text="RESET ALL" />
+
+            <ToggleButton
+                android:id="@+id/toggleButton"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"/>
+        </LinearLayout>
+
 
     </LinearLayout>
 </LinearLayout>
