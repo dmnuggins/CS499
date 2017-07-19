@@ -57,15 +57,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         averageTextView = (TextView) findViewById(R.id.textViewAverage);
         yesterdayTextView = (TextView) findViewById(R.id.textViewYesterday);
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+
         // sharedPreferences initialization
         pref = getSharedPreferences(TRACKING_VALUES, Context.MODE_PRIVATE);
 
+        // variable initialization
         boolean initial = pref.getBoolean(INITIAL,true);
-        boolean checkedStatus =  pref.getBoolean(TOGGLE_BUTTON_STATE,true);
-        toggleButton.setChecked(checkedStatus);
-
-
-
+        boolean toggleStatus =  pref.getBoolean(TOGGLE_BUTTON_STATE,true);
+        toggleButton.setChecked(toggleStatus);
 
         // sets the initial count when first opening the app
         if(initial) {
@@ -81,16 +80,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(isChecked) {
                     Log.i("MAIN, runnable", true + "");
                     pref.edit().putBoolean(TOGGLE_BUTTON_STATE, true).apply();
+                    startService(mServiceIntent);
                 } else {
-                    Log.i("MAIN, runnable", false + "");
                     pref.edit().putBoolean(TOGGLE_BUTTON_STATE, false).apply();
+                    stopService(mServiceIntent);
+                    Log.i("MAIN.toggle", "Service STOPPED");
                 }
             }
         });
 
-        if(!isMyServiceRunning(mUpdateService.getClass())) {
+        if(!isMyServiceRunning(mUpdateService.getClass()) && toggleButton.isChecked()) {
             Log.i("MAIN.onCreate", "START SERVICE");
-            startService(mServiceIntent);
+            if(toggleStatus) {
+                startService(mServiceIntent);
+            }
         }
 
         // Used to constantly update counter text view
@@ -149,11 +152,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onSaveInstanceState(outState);
         outState.putBoolean("ToggleButtonState", toggleButton.isChecked());
     }
-
-//    // saves button state
-//    public void saveButtonState(boolean pressed) {
-//        pref.edit().putBoolean(TOGGLE_BUTTON_STATE, pressed).apply();
-//    }
 
     private void updateTextView() {
         int count = pref.getInt(COUNT,0);

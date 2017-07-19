@@ -25,6 +25,7 @@ public class UpdateService extends Service {
     private static final String YESTERDAY = "yesterdayKey";
     private static final String DAY_COUNT = "dayCountKey";
     private static final String CURRENT_STATE = "cuStateKey";
+    private static final String TOGGLE_BUTTON_STATE = "toggleStateKey";
 
     SharedPreferences pref;
     BroadcastReceiver mReceiver;
@@ -106,11 +107,16 @@ public class UpdateService extends Service {
     public void onDestroy() {
 
         super.onDestroy();
+
         Log.i("SERVICE.oD", "Service DESTROYED");
         unregisterReceiver(mReceiver);
+
         // restarts the service once it's destroyed
-        Intent broadcastIntent = new Intent(".RestartService");
-        sendBroadcast(broadcastIntent);
+        boolean toggle = pref.getBoolean(TOGGLE_BUTTON_STATE,true);
+        if(toggle) {
+            Intent broadcastIntent = new Intent(".RestartService");
+            sendBroadcast(broadcastIntent);
+        }
         // NEED A BOOLEAN TO FLAG THAT SERVICE WAS RESTARTED
         Log.i("SERVICE.oD", "Broadcast SENT");
     }
