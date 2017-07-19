@@ -6,22 +6,6 @@
     android:layout_margin="20dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"
-        android:layout_marginBottom="10dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="LOCKED IN?"
-            android:textAlignment="center"
-            android:textSize="10pt" />
-    </LinearLayout>
-
-    <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -36,6 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
+            android:textSize="8pt"
             android:text="Checked your phone..."/>
         <TextView
             android:id="@+id/textViewCount"
@@ -52,7 +37,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="...times today."/>
+            android:textSize="8pt"
+            android:text="...time(s) today."/>
     </LinearLayout>
 
     <LinearLayout
