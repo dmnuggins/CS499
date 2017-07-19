@@ -1,5 +1,6 @@
 package dmnguyen.cs499;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -30,8 +32,6 @@ public class UpdateService extends Service {
     SharedPreferences pref;
     BroadcastReceiver mReceiver;
     IntentFilter filter;
-
-
 
     public UpdateService(Context appContext) {
         super();
@@ -150,7 +150,8 @@ public class UpdateService extends Service {
 
             pref.edit().putInt(YESTERDAY,dayTotal).apply();
             pref.edit().putInt(DAY_COUNT, dayCount).apply();
-            notifyUser(1);
+//            checkDailyRecord();
+//            notifyUser(1);
             pref.edit().putInt(COUNT,0).apply();
             calculateAverage();
 
@@ -167,6 +168,8 @@ public class UpdateService extends Service {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.locked_in_launcher_round))
+                        .setPriority(Notification.PRIORITY_HIGH)
                         .setNumber(flag)
                         .setSmallIcon(R.mipmap.locked_in_launcher_white)
                         .setContentTitle("LockedIN")
@@ -201,6 +204,7 @@ public class UpdateService extends Service {
         mNotificationManager.notify(0, mBuilder.build());
     }
 
+    // gives unique text to notifications
     public String numberNotification(int flag) {
         switch (flag) {
             case 0 :
@@ -209,15 +213,26 @@ public class UpdateService extends Service {
                 return "Yesterday, you checked your phone "
                         + Integer.toString(pref.getInt(COUNT,0))
                         + " times!";
+            case 2 :
+                return "You've broken your daily record...";
             default :
                 break;
         }
         return null;
     }
+
     // clears a notification based on its unique id
     public void cancelNotification(Context ctx, int notifyId) {
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager manager = (NotificationManager) ctx.getSystemService(ns);
         manager.cancel(notifyId);
     }
+
+//    public void checkDailyRecord() {
+//        int count = pref.getInt(COUNT,0);
+//        float daily = pref.getFloat(AVERAGE,0);
+//        if(count > daily && daily != 0.0) {
+//            notifyUser(2);
+//        }
+//    }
 }
