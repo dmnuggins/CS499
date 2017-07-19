@@ -16,9 +16,7 @@ import android.util.Log;
 
 import java.util.Calendar;
 
-
 public class UpdateService extends Service {
-
 
     private static final String TRACKING_VALUES = "trackingValues";
     private static final String COUNT = "countKey";
@@ -28,8 +26,6 @@ public class UpdateService extends Service {
     private static final String DAY_COUNT = "dayCountKey";
     private static final String CURRENT_STATE = "cuStateKey";
 
-    private boolean serviceStarted;
-
     SharedPreferences pref;
     BroadcastReceiver mReceiver;
     IntentFilter filter;
@@ -38,7 +34,7 @@ public class UpdateService extends Service {
         super();
     }
 
-    public UpdateService() {};
+    public UpdateService(){}
 
     @Override
     public void onCreate() {
@@ -48,7 +44,6 @@ public class UpdateService extends Service {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         mReceiver = new ScreenReceiver();
         registerReceiver(mReceiver, filter);
-        serviceStarted = true;
         pref = getApplication().getSharedPreferences(TRACKING_VALUES,Context.MODE_PRIVATE);
 
         // Background thread to reset counter once the day ends
@@ -84,6 +79,11 @@ public class UpdateService extends Service {
 
         notifyUser(0);
 
+        /**
+         * When service restarts, this checks if the previous state of the screen. If screen
+         * was still on when service restarts, count will not increase. If screen was off before
+         * service restarts, count will update.
+         */
         if(screenOn && !previousState) {
             updateCount += 1;
             updateTotal += 1;
@@ -97,11 +97,9 @@ public class UpdateService extends Service {
             Log.i("TOTAL", Integer.toString(updateTotal));
 
         }
-
         pref.edit().putBoolean(CURRENT_STATE,screenOn).apply();
         return START_STICKY;
     }
-
 
     @Override
     public void onDestroy() {
@@ -109,22 +107,10 @@ public class UpdateService extends Service {
         super.onDestroy();
         Log.i("SERVICE.oD", "Service DESTROYED");
         unregisterReceiver(mReceiver);
-        //
-        int updateCount = pref.getInt(COUNT,0);
-        int updateTotal = pref.getInt(TOTAL,0);
-        // to account for service being started again twice
-//        updateCount -= 2;
-//        updateTotal -= 2;
-//        updateCount -= 1;
-//        updateTotal -= 1;
-        pref.edit().putInt(COUNT, updateCount).apply();
-        pref.edit().putInt(TOTAL, updateTotal).apply();
-
         // restarts the service once it's destroyed
         Intent broadcastIntent = new Intent(".RestartService");
         sendBroadcast(broadcastIntent);
         // NEED A BOOLEAN TO FLAG THAT SERVICE WAS RESTARTED
-
         Log.i("SERVICE.oD", "Broadcast SENT");
     }
 
@@ -163,7 +149,7 @@ public class UpdateService extends Service {
         }
     }
 
-    // Sends a notification lettting user know how many times they've check their phone
+    // Sends a notification lets user know how many times they've check their phone
     private void notifyUser(int flag) {
 
         String note = numberNotification(flag);

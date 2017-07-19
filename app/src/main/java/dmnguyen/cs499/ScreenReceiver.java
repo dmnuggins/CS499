@@ -6,11 +6,10 @@ import android.content.Intent;
 import android.util.Log;
 
 public class ScreenReceiver extends BroadcastReceiver {
-    public static boolean screenOn = true;
+    public static boolean screenOn;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
 
         if(intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
             // do whatever to be done

@@ -10,12 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Intent mServiceIntent;
     UpdateService mUpdateService;
+    SharedPreferences pref;
+
     private Button resetCounterButton;
     private TextView counterTextView;
     private TextView totalTextView;
@@ -27,8 +28,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TOTAL = "totalKey";
     private static final String AVERAGE = "averageKey";
     private static final String YESTERDAY = "yesterdayKey";
+    private static final String INITIAL = "initialKey";
 
-    SharedPreferences pref;
+
 
 
     @Override
@@ -50,18 +52,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // sharedPreferences
         pref = getSharedPreferences(TRACKING_VALUES, Context.MODE_PRIVATE);
+        boolean initial = pref.getBoolean(INITIAL,true);
+
+        // sets the initial count when first opening the app
+        if(initial) {
+            pref.edit().putInt(TOTAL,1).apply();
+            pref.edit().putInt(COUNT,1).apply();
+            pref.edit().putBoolean(INITIAL,false).apply();
+        }
 
         if(!isMyServiceRunning(mUpdateService.getClass())) {
             Log.i("MAIN.onCreate", "START SERVICE");
-
-//            int countShift = pref.getInt(COUNT,0);
-//            int totalShift = pref.getInt(TOTAL,0);
-//            if(countShift > 0) {
-//                countShift -= 1;
-//                totalShift -= 1;
-//            }
-//            pref.edit().putInt(COUNT,countShift).apply();
-//            pref.edit().putInt(TOTAL,totalShift).apply();
             startService(mServiceIntent);
         }
 
@@ -94,8 +95,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i("Feedback Message", "ALL VALUES RESET");
         }
     }
-
-
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
